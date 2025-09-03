@@ -1,0 +1,69 @@
+// Grupo HERON
+// A lógica é simples, definimos motores e sensores, definimos a velocidade normal dos motores, ou seja, que eles
+//normalmente devem usar, a curva é a velocidade que o robô deve usar quando detectar preto pra fazer a curva,
+// um dos motores vai pra frente e outro vai pra direçao contraria facilitando a rotação nas curvas.
+// O restante acreditamos que seja bem intuitivo e auto explicativo. 
+#include <AFMotor.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+AF_DCMotor motorE(3);
+AF_DCMotor motorD(4);
+
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+#define SentinelaD 53 // Direito
+#define SentinelaE 52 // Esquerdo
+
+int velocidadeNormal = 175;     
+int curvaFrente = 225;    
+int curvaTras = 165;     
+
+void setup() {
+  pinMode(SentinelaE, INPUT);
+  pinMode(SentinelaD, INPUT);
+
+  motorE.setSpeed(velocidadeNormal);
+  motorD.setSpeed(velocidadeNormal);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print("   UMA VEZ CPM");
+  lcd.setCursor(0,1);
+  lcd.print("   SEMPRE CPM");
+}
+
+void loop() {
+  bool brancoEsq = digitalRead(SentinelaE); 
+  bool brancoDir = digitalRead(SentinelaD);
+
+  if (brancoEsq && brancoDir) {
+    // Marche
+    motorE.setSpeed(velocidadeNormal);
+    motorD.setSpeed(velocidadeNormal);
+    motorE.run(FORWARD);
+    motorD.run(FORWARD);
+  } 
+  else if (brancoEsq && !brancoDir) {
+    // Direita Volver
+    motorE.setSpeed(curvaTras);
+    motorD.setSpeed(curvaFrente);
+    motorE.run(BACKWARD);
+    motorD.run(FORWARD);
+  } 
+  else if (!brancoEsq && brancoDir) {
+    // Esquerda Volver
+    motorE.setSpeed(curvaFrente);
+    motorD.setSpeed(curvaTras);
+    motorE.run(FORWARD);
+    motorD.run(BACKWARD);
+  } 
+  else if (!brancoEsq && !brancoDir) {
+    // Em direção ao infinito
+    motorE.setSpeed(velocidadeNormal);
+    motorD.setSpeed(velocidadeNormal);
+    motorE.run(FORWARD);
+    motorD.run(FORWARD);
+  }
+}
