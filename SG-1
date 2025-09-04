@@ -1,0 +1,66 @@
+// Pinos dos motores
+#define IN1 7  // Motor Esquerdo
+#define IN2 6
+#define IN3 5  // Motor Direito
+#define IN4 4
+
+// Pinos dos sensores
+#define SENSOR_ESQ 9
+#define SENSOR_DIR 10
+
+void setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  pinMode(SENSOR_ESQ, INPUT);
+  pinMode(SENSOR_DIR, INPUT);
+}
+
+void loop() {
+  int esq = digitalRead(SENSOR_ESQ); // 0 = branco | 1 = preto
+  int dir = digitalRead(SENSOR_DIR);
+
+  if (esq == LOW && dir == LOW) {
+    frente();
+  }
+  else if (esq == HIGH && dir == LOW) {
+    curvaEsquerda();
+  }
+  else if (esq == LOW && dir == HIGH) {
+    curvaDireita();
+  }
+  else { 
+    frente(); // ou parar();
+  }
+}
+
+// Motores
+void frente() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+}
+
+void curvaEsquerda() {
+  digitalWrite(IN1, LOW);  // Motor E parado
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); // Motor D frente
+  digitalWrite(IN4, LOW);
+}
+
+void curvaDireita() {
+  digitalWrite(IN1, HIGH); // Motor E frente
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);  // Motor D parado
+  digitalWrite(IN4, LOW);
+}
+
+void parar() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
